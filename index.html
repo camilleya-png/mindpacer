@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="MindPacer helps you plan focus sessions, take intentional breaks, and track progress.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/MindPacer-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>MindPacer — Lock the scroll. Reach your goal.</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">D</div>
+      <div class="brand-copy"><div class="brand">MindPacer</div><div class="tagline">Lock the scroll. Reach your goal.</div></div>
+      <button id="notifyBtn" class="icon-button" aria-label="Enable reminders" title="Enable reminders">🔔</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">YOUR FOCUS STARTS HERE</div>
+        <h1>Make time for<br><span>what matters.</span></h1>
+        <p>One task. One session. One step forward.</p>
+        <div class="hero-stats">
+          <div><strong id="todayMinutes">0</strong><span>focus minutes today</span></div>
+          <div><strong id="todaySessions">0</strong><span>sessions completed</span></div>
+        </div>
+      </section>
+
+      <section id="activePanel" class="panel active-panel">
+        <div class="section-heading"><div><div class="eyebrow">RIGHT NOW</div><h2 id="activeTitle">Ready when you are</h2></div><span id="phaseBadge" class="status-badge">READY</span></div>
+        <p id="activeDescription" class="muted">Set a task and make a little progress.</p>
+        <div id="timerWrap" class="timer-wrap hidden">
+          <div class="timer-ring"><div class="timer-inner"><div id="timerText" class="timer">00:00</div><div id="timerLabel" class="timer-label">FOCUS TIME</div></div></div>
+          <div class="progress-track"><div id="timerProgress" class="progress-fill"></div></div>
+          <div id="cycleLabel" class="cycle-label"></div>
+        </div>
+        <div id="activeButtons" class="button-row">
+          <button class="button primary" id="goSchedule">＋ Plan a focus session</button>
+        </div>
+      </section>
+
+      <section id="checkinPanel" class="panel hidden">
+        <div class="section-heading"><div><div class="eyebrow">PROOF TO PROGRESS</div><h2>Check in with yourself</h2></div><span class="small-icon">✦</span></div>
+        <p class="muted">Add a photo of your work or a short note about what you achieved. This is for your own accountability; the app does not judge whether the work is complete.</p>
+        <label class="field-label" for="checkinNote">Progress note</label>
+        <textarea id="checkinNote" rows="3" placeholder="I finished the introduction and outlined the next section…"></textarea>
+        <label class="field-label" for="checkinPhoto">Optional photo of your work</label>
+        <input id="checkinPhoto" type="file" accept="image/*" capture="environment">
+        <div id="photoPreviewWrap" class="photo-preview-wrap hidden"><img id="photoPreview" alt="Selected progress photo"><button id="removePhoto" class="text-button" type="button">Remove photo</button></div>
+        <div class="button-row"><button class="button primary" id="saveCheckin">Save check-in</button><button class="button secondary" id="skipCheckin">Not now</button></div>
+      </section>
+
+      <section id="scheduleSection" class="panel hidden">
+        <div class="eyebrow">MAKE A PLAN</div><h2>Build your focus session</h2>
+        <p class="muted">Choose a task, decide your work/break rhythm, and select the apps you want to avoid.</p>
+        <form id="sessionForm">
+          <label class="field-label" for="taskInput">What do you want to work on?</label>
+          <input id="taskInput" maxlength="100" required placeholder="e.g. Finish counselling assignment">
+          <div class="form-grid">
+            <div><label class="field-label" for="startInput">Start time</label><input id="startInput" type="datetime-local" required></div>
+            <div><label class="field-label" for="cyclesInput">Focus cycles</label><select id="cyclesInput"><option value="1">1 cycle</option><option value="2" selected>2 cycles</option><option value="3">3 cycles</option><option value="4">4 cycles</option><option value="5">5 cycles</option></select></div>
+            <div><label class="field-label" for="focusInput">Work (minutes)</label><input id="focusInput" type="number" min="1" max="240" value="25" required></div>
+            <div><label class="field-label" for="breakInput">Break (minutes)</label><input id="breakInput" type="number" min="1" max="60" value="5" required></div>
+          </div>
+          <div class="field-label">Apps to avoid during focus time</div>
+          <p class="tiny muted">This starter records your choices but cannot block these apps yet.</p>
+          <div class="app-options">
+            <label class="app-option"><input type="checkbox" value="WhatsApp" checked><span>WhatsApp</span></label>
+            <label class="app-option"><input type="checkbox" value="Instagram" checked><span>Instagram</span></label>
+            <label class="app-option"><input type="checkbox" value="TikTok" checked><span>TikTok</span></label>
+            <label class="app-option"><input type="checkbox" value="YouTube"><span>YouTube</span></label>
+            <label class="app-option"><input type="checkbox" value="Snapchat"><span>Snapchat</span></label>
+            <label class="app-option"><input type="checkbox" value="Other apps"><span>Other apps</span></label>
+          </div>
+          <div class="button-row form-actions"><button class="button primary" type="submit">Create session</button><button class="button secondary" id="cancelSchedule" type="button">Cancel</button></div>
+          <p id="formMessage" class="form-message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="progressSection" class="panel hidden">
+        <div class="eyebrow">SMALL STEPS ADD UP</div><h2>Your progress</h2>
+        <div class="progress-summary">
+          <div class="summary-tile"><span>Total focus time</span><strong id="totalMinutes">0 min</strong></div>
+          <div class="summary-tile"><span>Completed sessions</span><strong id="totalSessions">0</strong></div>
+          <div class="summary-tile"><span>Check-ins saved</span><strong id="totalCheckins">0</strong></div>
+        </div>
+        <h3 class="subheading">Recent sessions</h3>
+        <div id="historyList" class="history-list"></div>
+        <button id="clearHistory" class="text-button danger-text" type="button">Clear saved activity</button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item selected" data-view="home"><span>⌂</span>Home</button>
+      <button class="nav-item" data-view="schedule"><span>＋</span>Plan</button>
+      <button class="nav-item" data-view="progress"><span>▥</span>Progress</button>
+    </nav>
+    <footer><span>MindPacer</span> · Your focus, your choice.</footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
